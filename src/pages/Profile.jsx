@@ -49,21 +49,29 @@ const Profile = () => {
 
     const fetchProfile = async () => {
         try {
-            const res = await api.get("/profiles", {
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const res = await api.get("/profiles");
             const data = res.data;
-            setProfile(data);
-            setDescripcion(data.descripcion || "");
-            setAptitudes(data.aptitudes || []);
-            setExperiencia(data.experiencia || []);
-            setEducacion(data.educacion || []);
+            if (!data) {
+                // Perfil no existe, inicializamos uno vacío
+                setProfile({});
+                setDescripcion("");
+                setAptitudes([]);
+                setExperiencia([]);
+                setEducacion([]);
+            } else {
+                setProfile(data);
+                setDescripcion(data.descripcion || "");
+                setAptitudes(data.aptitudes || []);
+                setExperiencia(data.experiencia || []);
+                setEducacion(data.educacion || []);
+            }
         } catch (error) {
             toast.error(t("error_loading_profile", "Error loading profile"));
         } finally {
             setLoading(false);
         }
     };
+
 
     useEffect(() => {
         fetchProfile();
