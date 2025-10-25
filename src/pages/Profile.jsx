@@ -10,7 +10,13 @@ const Profile = () => {
     const { t } = useTranslation();
     const { token } = useContext(AuthContext);
 
-    const [profile, setProfile] = useState(null);
+    // Estados inicializados con valores por defecto
+    const [profile, setProfile] = useState({
+        descripcion: "",
+        aptitudes: [],
+        experiencia: [],
+        educacion: []
+    });
     const [loading, setLoading] = useState(true);
     const [validations, setValidations] = useState([]);
 
@@ -25,7 +31,6 @@ const Profile = () => {
         "AWS", "Docker", "Kubernetes", "CI/CD", "Agile",
         "Git", "Figma", "TypeScript", "Next.js", "Vue.js"
     ];
-
     const skillOptions = skillsList.map((s) => ({ label: s, value: s }));
 
     const handleSkillChange = (selectedOptions) => {
@@ -47,31 +52,26 @@ const Profile = () => {
     const addExperiencia = () => setExperiencia([...experiencia, ""]);
     const addEducacion = () => setEducacion([...educacion, ""]);
 
+    // Fetch profile del usuario
     const fetchProfile = async () => {
         try {
             const res = await api.get("/profiles");
             const data = res.data;
-            if (!data) {
-                // Perfil no existe, inicializamos uno vacío
-                setProfile({});
-                setDescripcion("");
-                setAptitudes([]);
-                setExperiencia([]);
-                setEducacion([]);
-            } else {
+
+            if (data) {
                 setProfile(data);
                 setDescripcion(data.descripcion || "");
                 setAptitudes(data.aptitudes || []);
                 setExperiencia(data.experiencia || []);
                 setEducacion(data.educacion || []);
             }
+            // si no hay data, profile ya está inicializado vacío
         } catch (error) {
             toast.error(t("error_loading_profile", "Error loading profile"));
         } finally {
             setLoading(false);
         }
     };
-
 
     useEffect(() => {
         fetchProfile();
@@ -118,11 +118,7 @@ const Profile = () => {
                         theme={(theme) => ({
                             ...theme,
                             borderRadius: 4,
-                            colors: {
-                                ...theme.colors,
-                                primary25: '#cce5ff',
-                                primary: '#007bff',
-                            },
+                            colors: { ...theme.colors, primary25: '#cce5ff', primary: '#007bff' },
                         })}
                     />
                 </div>
