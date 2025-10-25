@@ -32,6 +32,21 @@ const Profile = () => {
         setAptitudes(selectedOptions.map(opt => opt.value));
     };
 
+    const handleExperienciaChange = (e, index) => {
+        const updated = [...experiencia];
+        updated[index] = e.target.value;
+        setExperiencia(updated);
+    };
+
+    const handleEducacionChange = (e, index) => {
+        const updated = [...educacion];
+        updated[index] = e.target.value;
+        setEducacion(updated);
+    };
+
+    const addExperiencia = () => setExperiencia([...experiencia, ""]);
+    const addEducacion = () => setEducacion([...educacion, ""]);
+
     const fetchProfile = async () => {
         try {
             const res = await api.get("/profiles", {
@@ -44,7 +59,7 @@ const Profile = () => {
             setExperiencia(data.experiencia || []);
             setEducacion(data.educacion || []);
         } catch (error) {
-            toast.error("Error al cargar el perfil");
+            toast.error(t("error_loading_profile", "Error loading profile"));
         } finally {
             setLoading(false);
         }
@@ -62,36 +77,36 @@ const Profile = () => {
                 { descripcion, aptitudes, experiencia, educacion },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
-            toast.success("✅ Perfil actualizado correctamente");
+            toast.success(t("profile_updated", "Profile updated successfully"));
         } catch (error) {
-            toast.error("❌ Error al actualizar el perfil");
+            toast.error(t("error_updating_profile", "Error updating profile"));
         }
     };
 
-    if (loading) return <p>Cargando perfil...</p>;
+    if (loading) return <p>{t("loading", "Loading profile...")}</p>;
 
     return (
         <div className="container mt-4">
-            <h2 className="mb-4">Editar Perfil</h2>
+            <h2 className="mb-4">{t("edit_profile", "Edit Profile")}</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group mb-3">
-                    <label>Descripción</label>
+                    <label>{t("description", "Description")}</label>
                     <textarea
                         className="form-control"
-                        placeholder="Descripción"
+                        placeholder={t("description", "Description")}
                         value={descripcion}
                         onChange={(e) => setDescripcion(e.target.value)}
                     />
                 </div>
 
                 <div className="form-group mb-3">
-                    <label>Aptitudes</label>
+                    <label>{t("skills", "Skills")}</label>
                     <Select
                         options={skillOptions}
                         value={skillOptions.filter((opt) => aptitudes.includes(opt.value))}
                         onChange={handleSkillChange}
                         isMulti
-                        placeholder="Selecciona tus habilidades..."
+                        placeholder={t("select_skills", "Select your skills...")}
                         theme={(theme) => ({
                             ...theme,
                             borderRadius: 4,
@@ -104,8 +119,42 @@ const Profile = () => {
                     />
                 </div>
 
+                <div className="form-group mb-3">
+                    <label>{t("experience", "Experience")}</label>
+                    {experiencia.map((exp, idx) => (
+                        <input
+                            key={idx}
+                            type="text"
+                            value={exp}
+                            onChange={(e) => handleExperienciaChange(e, idx)}
+                            className="form-control mb-2"
+                            placeholder={t("experience_entry", "Experience entry")}
+                        />
+                    ))}
+                    <button type="button" className="btn btn-outline-secondary btn-sm" onClick={addExperiencia}>
+                        {t("add_experience", "Add Experience")}
+                    </button>
+                </div>
+
+                <div className="form-group mb-4">
+                    <label>{t("education", "Education")}</label>
+                    {educacion.map((edu, idx) => (
+                        <input
+                            key={idx}
+                            type="text"
+                            value={edu}
+                            onChange={(e) => handleEducacionChange(e, idx)}
+                            className="form-control mb-2"
+                            placeholder={t("education_entry", "Education entry")}
+                        />
+                    ))}
+                    <button type="button" className="btn btn-outline-secondary btn-sm" onClick={addEducacion}>
+                        {t("add_education", "Add Education")}
+                    </button>
+                </div>
+
                 <button type="submit" className="btn btn-primary">
-                    Guardar perfil
+                    {t("save_profile", "Save Profile")}
                 </button>
             </form>
 
