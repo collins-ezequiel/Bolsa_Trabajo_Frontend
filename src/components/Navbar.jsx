@@ -79,7 +79,7 @@ const Navbar = () => {
                     </ul>
 
                     {/* Selector de idioma y botones login/logout */}
-                    <div className="d-flex align-items-center">
+                    <div className="d-flex align-items-center flex-column flex-lg-row gap-2 pb-3 pb-lg-0">
                         <select
                             onChange={(e) => changeLanguage(e.target.value)}
                             value={i18n.language}
